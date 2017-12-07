@@ -18,7 +18,7 @@ bindsym $mod+Return exec i3-sensible-terminal
 # kill focused window
 bindsym F4 kill
 
-#bindsym $mod+d exec dmenu_run
+bindsym $mod+d exec "rofi -show-icons -modi combi -show combi -combi-modi drun"
 #bindsym $mod+d exec --no-startup-id j4-dmenu-desktop
 #bindsym $mod+d exec rofi -show run -lines 3 -eh 2 -width 100 -padding 450 -opacity "85" -bw 0 -bc "#0088CC" -bg "#0088CC" -fg "#ffffff" -hlbg "#0088CC" -hlfg "#9575cd"
 #bindsym $mod+d exec rofi -show run
@@ -109,7 +109,8 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec "~/.config/i3/i3-exit"
+#bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -150,7 +151,7 @@ bindsym $mod+bracketright move workspace to output right
 # finds out, if available)
 bar {
   status_command ~/.config/i3/i3blocks -c ~/.config/i3/i3blocks.conf
-  tray_output primary
+ # tray_output primary
   colors {
     separator #7d7d7d
     background #141414
@@ -163,15 +164,21 @@ bar {
 }
 
 exec_always --no-startup-id "setxkbmap -layout us,gr -option grp:alt_shift_toggle"
-mode "poweroff" {
-	bindsym $mod+Shift+BackSpace exec "poweroff"
-	bindsym $mod+Shift+r exec "reboot"
 
-	# back to normal: Enter or Escape
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+set $mode_system System (Win+Shift+l) lock, (Win+Shift+e) logout, (Win+Shift+s) suspend, (Win+Shift+r) reboot, (Win+Shift+s) shutdown
+mode "$mode_system" {
+    bindsym $mod+Shift+l exec --no-startup-id "~/bin/lock.sh"
+    bindsym $mod+Shift+e exec --no-startup-id "i3-msg exit"
+    bindsym $mod+Shift+s exec --no-startup-id "i3lock && systemctl suspend"
+    bindsym $mod+Shift+r exec --no-startup-id reboot
+    bindsym $mod+Shift+s exec --no-startup-id poweroff
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
 }
-bindsym $mod+Shift+BackSpace mode "poweroff"
+bindsym $mod+Shift+BackSpace mode "$mode_system"
+
 bindsym $mod+BackSpace exec --no-startup-id "systemctl suspend"
 
 mode "launcher" {
@@ -198,14 +205,14 @@ assign [class="Sublime_text"] $workspace4
 for_window [class="Nemo"] floating enable
 
 # workspace default monitors
-workspace $workspace1 output HDMI-0
-workspace $workspace2 output HDMI-0
-workspace $workspace3 output DVI-I-0
-workspace $workspace4 output HDMI-0
-workspace $workspace5 output HDMI-0
-workspace $workspace6 output HDMI-0
-workspace $workspace9 output HDMI-0
-workspace $workspace10 output DVI-I-0
+#workspace $workspace1 output HDMI-0
+#workspace $workspace2 output HDMI-0
+#workspace $workspace3 output DVI-I-0
+#workspace $workspace4 output HDMI-0
+#workspace $workspace5 output HDMI-0
+#workspace $workspace6 output HDMI-0
+#workspace $workspace9 output HDMI-0
+#workspace $workspace10 output DVI-I-0
 
 for_window [class="Tilda"] fullscreen enable
 
@@ -217,13 +224,12 @@ bindsym --release XF86Calculator exec gnome-calculator
 
 #exec_always compton -f -c -b
 exec_always --no-startup-id ~/.fehbg
-exec --no-startup-id google-chrome
+#exec --no-startup-id google-chrome
 exec_always --no-startup-id numlockx on
 exec --no-startup-id tilda
 exec --no-startup-id nm-applet
 exec --no-startup-id unclutter
 exec --no-startup-id pasystray
-exec --no-startup-id ulauncher
 
 client.focused #00b0ef #00b0ef #141414 #ff7066
 client.focused_inactive #141414 #141414 #00b0ef #472b2a
